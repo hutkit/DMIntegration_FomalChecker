@@ -14,7 +14,11 @@ def getImageUrls(search_q="スーツ", max_images=50):
     from azure.cognitiveservices.search.imagesearch import ImageSearchAPI
     from msrest.authentication import CognitiveServicesCredentials
     # 環境設定
-    subscription_key = "e4211876f6a94d7292d76cff2bed14a7"
+    apikey_file = "apikey.txt"
+    with open(apikey_file) as f:
+        key = f.readlines()
+    subscription_key = key[0].strip()
+
     # 検索クエリ
     search_term = search_q
     # パラメータ
@@ -23,14 +27,16 @@ def getImageUrls(search_q="スーツ", max_images=50):
     client = ImageSearchAPI(CognitiveServicesCredentials(subscription_key))
 
     #max_imagesの数だけ画像を取得。
-    image_results[][]
     for i in range(0,max_images // img_count):
         tmp_results = client.images.search(
             query=search_term,
             count=img_count,
             offset=(i*img_count))
-        
-        for tmp_img in tmp_results.Value
+
+    for tmp_img in tmp_results.Value:
+        image_results.append = [
+            tmp_img.thumbnail_url,
+            tmp_img.content_url]
 
 
     return image_results
