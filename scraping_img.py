@@ -1,6 +1,22 @@
 # -*- encoding: utf-8 -*-
 
 import numpy as np
+import re
+
+##########################################################################################
+# checkFileType
+# 渡されたファイルの末尾が画像以外のものは排除
+# お蔵入り?
+##########################################################################################
+'''
+def checkFileType(filename):
+    regex = re.compile(r'((\.jpg)|(\.png)|(\.gif)|(\.bmp))$')
+    match = regex.search(filename)
+    if match is None:
+        return False
+    else:
+        return True
+'''
 
 ##############################################
 # writeResults
@@ -17,7 +33,7 @@ def writeResults(results, file="imgs/default_results.txt"):
 # image_results["画像のサムネイルURL"]["画像のフルURL"]
 # np.arrayで帰ってくる。
 ##############################################
-def getImageUrls(search_q="スーツ", max_images=50):
+def getImageUrls(search_q="スーツ", max_images=30):
     # Azure のAPIを登録。
     from azure.cognitiveservices.search.imagesearch import ImageSearchAPI
     from msrest.authentication import CognitiveServicesCredentials
@@ -30,7 +46,7 @@ def getImageUrls(search_q="スーツ", max_images=50):
     # 検索クエリ
     search_term = search_q
     # パラメータ
-    img_count = 35
+    img_count =10
     #API Client
     client = ImageSearchAPI(CognitiveServicesCredentials(subscription_key))
 
@@ -42,13 +58,14 @@ def getImageUrls(search_q="スーツ", max_images=50):
             count=img_count,
             offset=(i*img_count))
 
-    #return用のオブジェクトを作成（今後回収の余地アリ？）
+    #return用のオブジェクトを作成
     image_results = [["thumnail_url", "content_url"]]
     for tmp_img in tmp_results.value:
         image_results.append([
             tmp_img.thumbnail_url,
             tmp_img.content_url])
 
+    #listをnp.arrayに変換してreturn
     return np.array(image_results)
 
 ##############################################
