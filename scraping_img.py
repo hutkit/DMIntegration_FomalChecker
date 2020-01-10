@@ -8,7 +8,6 @@ import re
 # 渡されたファイルの末尾が画像以外のものは排除
 # お蔵入り?
 ##########################################################################################
-'''
 def checkFileType(filename):
     regex = re.compile(r'((\.jpg)|(\.png)|(\.gif)|(\.bmp))$')
     match = regex.search(filename)
@@ -16,7 +15,6 @@ def checkFileType(filename):
         return False
     else:
         return True
-'''
 
 ##############################################
 # writeResults
