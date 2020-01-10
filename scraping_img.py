@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-#import json
-#from datetime import datetime
 import numpy as np
 
 ##############################################
@@ -53,28 +51,9 @@ def getImageUrls(search_q="スーツ", max_images=50):
 
     return np.array(image_results)
 
-#時間データのdump化 ボツ？
-'''
-def date_encoder(obj):
-    if isinstance(obj, datetime):
-        return obj.isoformat()
-'''
-
 ##############################################
 ## main
 ##############################################
 image_results = getImageUrls("スーツ")
 #writeResults(image_results[:, 0], "imgs/results_thumbnails.txt")
 writeResults(image_results[:, 1], "imgs/results_contents.txt")
-'''
-デフォルトの表示部分
-if image_results.value:
-    first_image_result = image_results.value[0]
-    print("Total number of images returned: {}".format(len(image_results.value)))
-    print("First image thumbnail url: {}".format(
-        first_image_result.thumbnail_url))
-    print("First image content url: {}".format(first_image_result.content_url))
-    #print("total_Hits: {}".format(image_results.totalEstimatedMatches))
-else:
-    print("No image results returned!")
-'''
