@@ -1,8 +1,9 @@
-#検索結果の画像類は無視する。
+#検索結果の画像類やURL類は無視する。
 /imgs
 *.json
 *.png
 *.jpg
 *.gif
+*.txt
 #apiキーが記述されたファイルは除外
 apikey.txt
