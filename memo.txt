@@ -1,0 +1,26 @@
+■pip install azureはNG？
+I was also getting the same original issue (ModuleNotFoundError: No module named 'azure.cognitiveservices') for the spellcheck functions. Do NOT pip install azure . It installs all of the subpackages and I have a feeling there is an overlap between them that is causing issues.
+
+I couldn't easily remove all the sub packages so I wiped my environment, started fresh, and this time only installed the pack I wanted (in this case pip install azure-cognitiveservices-language-spellcheck).
+
+Now I am able to from azure.cognitiveservices.language.spellcheck import SpellCheckAPI without problem
+
+https://github.com/Microsoft/PTVS/issues/4405
+
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
+■
