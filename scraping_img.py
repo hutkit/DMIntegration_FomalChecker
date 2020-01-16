@@ -1,22 +1,10 @@
 # -*- encoding: utf-8 -*-
 
 import numpy as np
-import re
 import requests
-import http.client
-
-
-def checkFileType(filename):
-    '''
-    渡されたファイルの末尾が画像以外のものは排除
-    お蔵入り?
-    '''
-    regex = re.compile(r'((\.jpg)|(\.png)|(\.gif)|(\.bmp))$')
-    match = regex.search(filename)
-    if match is None:
-        return False
-    else:
-        return True
+import os
+import urllib
+# import http.client
 
 
 def writeResults(results, file="imgs/default_results.txt"):
@@ -27,7 +15,7 @@ def writeResults(results, file="imgs/default_results.txt"):
         f.write("\n".join(results))
 
 
-def getImageUrls(search_q="スーツ", max_images=30):
+def getImageUrls(search_q="スーツ", get_once_images=10, max_images=30):
     '''
     max_imagesの数だけ、search_qで見つけたURLを取得してreturnする
     返り値：
@@ -46,7 +34,7 @@ def getImageUrls(search_q="スーツ", max_images=30):
     # 検索クエリ
     search_term = search_q
     # パラメータ
-    img_count = 10
+    img_count = get_once_images
     # API Client
     client = ImageSearchAPI(CognitiveServicesCredentials(subscription_key))
 
@@ -59,11 +47,14 @@ def getImageUrls(search_q="スーツ", max_images=30):
             offset=(i*img_count))
 
     # return用のオブジェクトを作成
-    image_results = [["thumnail_url", "content_url"]]
+    image_results = []
+    file_num = 0
     for tmp_img in tmp_results.value:
         image_results.append([
+            str(file_num).zfill(5),
             tmp_img.thumbnail_url,
             tmp_img.content_url])
+        file_num += 1
 
     # listをnp.arrayに変換してreturn
     return np.array(image_results)
@@ -87,8 +78,49 @@ def dlImages(img_list, save_path):
     pass
 
 
-if __name__ == '__main__:'
-'''
+def download_image(url, timeout=10):
+    response = requests.get(url, allow_redirects=True, timeout=timeout)
+    if response.status_code != 200:
+        error = Exception("HTTP status: " + response.status_code)
+        raise error
+
+    content_type = response.headers["content-type"]
+    if 'image' not in content_type:
+        error = Exception("Content-Type: " + content_type)
+        raise error
+
+    return response.content
+
+
+def save_image(filename, image):
+    with open(filename, "wb") as fout:
+        fout.write(image)
+
+
+def get_imgs_from_urlfile(urlfile, save_dir):
+    with open(urlfile) as fobj:
+        name_num = 0
+        for f in fobj:
+            url_parsed = urllib.parse.urlparse(f.rstrip("\n"))
+            img_url = urllib.parse.urlunparse(url_parsed)
+            ret_content = download_image(img_url)
+            # ディレクトリ名 + 00000からの通し番号 + 拡張子.xxx
+            name_str = save_dir + \
+                str(name_num).zfill(5) + os.path.splitext(img_url)[-1]
+            save_image(name_str, ret_content)
+            name_num += 1
+
+
+def run_scraping(dir, search_q):
+    image_results = getImageUrls(search_q, 10, 30)
+    writeResults(image_results[:, 0], dir + "results_numAndurl.txt")
+    writeResults(image_results[:, 2], dir + "results_contents.txt")
+    get_imgs_from_urlfile(dir + "results_contents.txt", dir)
+    pass
+
+
+if __name__ == '__main__':
+    '''
     使えそうなクエリ候補
     写真：
     +filterui:photo-photo
@@ -96,7 +128,4 @@ if __name__ == '__main__:'
     +filterui:aspect-tall
     スーツ+男性+filterui:photo-photo
     '''
-
-image_results = getImageUrls("スーツ")
-#writeResults(image_results[:, 0], "imgs/results_thumbnails.txt")
-writeResults(image_results[:, 1], "imgs/results_contents.txt")
+    run_scraping("imgs/men_suit/", "男性+スーツ")
