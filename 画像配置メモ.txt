@@ -1,0 +1,32 @@
+以下のように画像を配置する。
+★googleColaboratoryでの利用を想定
+
+[任意の画像ディレクトリ]←jpynbで設定
+    -test
+        -men_suit
+        -men_casual
+    -validation
+        -men_suit
+        -men_casual
+    -train
+        -men_suit
+        -men_casual
+    -display
+        -men_suit
+        -men_casual
+
+★各ディレクトリについて
+■モデル学習に利用：
+train:モデル学習用の画像
+validation:モデルの汎化性能向上のための検証用画像
+
+■モデル評価に利用：
+test:
+trainやvalidationも含まれない検証用データ
+未知のデータに対する汎化性能、実地性能を測ることができる。
+
+■結果確認用：
+display:
+結果確認用のデータ。デモンストレーション用
+モデルの性能評価や学習とは無関係。
+trainやvalidationに含まれるデータを利用すると、当然良い結果が出る。

@@ -4,6 +4,9 @@
 *.png
 *.jpg
 *.gif
-*.txt
+
+# memo類
+# *.txt
+*進行メモ*
 #apiキーが記述されたファイルは除外
 apikey.txt
